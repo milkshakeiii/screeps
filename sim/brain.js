@@ -77,15 +77,31 @@ var brain = {
             var current = frontier.shift();
             var x = current[0];
             var y = current[1];
-            if (explored.includes(current)) {
+            //console.log(current);
+            //console.log(explored);
+            var includes = false;
+            for (var i = 0; i < explored.length; i++) {
+                var point = explored[i];
+                //console.log (point[0], x, point[1], y)
+                if (point[0] == x && point[1] == y) {
+                    //console.log("skip");
+                    includes = true;
+                    break;
+                }
+            }
+            if (includes) {
+                //console.log("skip");
                 continue;
             }
             //console.log([x, y]);
-            explored.push();
+            explored.push([x, y]);
             var is_wall = room.lookForAt(LOOK_TERRAIN, x, y) == "wall";
             var clear = brain.clear_on_all_sides(room, x, y);
-            
-            if (clear) {
+            var empty = brain.is_empty(room, x, y);
+            //console.log(is_wall);
+            //console.log(clear);
+            //console.log(empty);
+            if (clear && empty) {
                 return [x, y];
             }
             else if (!is_wall) {
