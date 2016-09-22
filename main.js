@@ -1,4 +1,4 @@
-var tasks = [   require('task.harvest'), require('task.priority_upgrade'), require('task.build'),
+var tasks = [   require('task.priority_upgrade'), require('task.harvest'),  require('task.defend'), require('task.build'),
                 require('task.upgrade'), require('task.harass'), require('task.settle')];
 var brain = require('brain')
 
@@ -32,8 +32,14 @@ build_creeps = function () {
             else if (spawn.room.energyCapacityAvailable < 800) {
                 part_array = [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE];
             }
-            else if (spawn.room.energyCapacityAvailable >= 800) {
+            else if (spawn.room.energyCapacityAvailable < 1300) {
                 part_array = [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+            }
+            else if (spawn.room.energyCapacityAvailable >= 1300) {
+                part_array = [  WORK, WORK, WORK,
+                                CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                                MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, 
+                                ATTACK];
             }
             
         }
