@@ -10,7 +10,7 @@ var harvest = {
         if (room.find(FIND_MY_SPAWNS).length == 0) {
             return 0;
         }
-        return 9;
+        return 7;
     },
     
     /** @param {Creep} creep **/

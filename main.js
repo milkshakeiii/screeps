@@ -1,4 +1,4 @@
-var tasks = [   require('task.priority_upgrade'), require('task.harvest'),  require('task.defend'), require('task.build'),
+var tasks = [   require('task.priority_upgrade'), require('task.defend'), require('task.harvest'),  require('task.build'),
                 require('task.upgrade'), require('task.harass'), require('task.settle')];
 var brain = require('brain')
 
@@ -10,6 +10,22 @@ clean_up = function () {
             delete Memory.creeps[name];
             console.log('Clearing non-existing creep memory:', name);
         }
+    }
+    
+    for (var name in Memory.rooms) {
+        var room = Game.rooms[name];
+        if (room.memory.reserved_objects == undefined) {
+            room.memory.reserved_objects = [];
+        }
+        
+        function exists(object_id) {
+           var gone = Game.getObjectById(object_id) == null;
+           if (gone) {
+               console.log(object_id + " being cleared from reserved objects list");
+           }
+           return !gone;
+        }
+        room.memory.reserved_objects = room.memory.reserved_objects.filter(exists);
     }
 }
 
@@ -36,10 +52,10 @@ build_creeps = function () {
                 part_array = [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
             }
             else if (spawn.room.energyCapacityAvailable >= 1300) {
-                part_array = [  WORK, WORK, WORK,
-                                CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
-                                MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, 
-                                ATTACK];
+                part_array = [  CARRY, WORK, MOVE, CARRY, WORK, MOVE, 
+                                MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, 
+                                MOVE, MOVE, MOVE, MOVE, MOVE, 
+                                WORK, CARRY, ATTACK];
             }
             
         }

@@ -7,6 +7,15 @@ var brain = {
         return sources[target_source_i];
     },
     
+    reserve_object: function (object) {
+        if (object.room.memory.reserved_objects == undefined) {
+            object.room.memory.reserved_objects = [];
+        }
+        object.room.memory.reserved_objects.push(object.id);
+        console.log(object.id + " reserved");
+        //console.log(object.room.memory.reserved_objects);
+    },
+    
     acquire_energy: function (creep) {
         var source = brain.find_energy_source(creep);
         if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
