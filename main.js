@@ -4,7 +4,7 @@ var brain = require('brain')
 
 var worker_switch = 60;
 
-clean_up = function () {
+var clean_up = function () {
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
@@ -29,7 +29,7 @@ clean_up = function () {
     }
 }
 
-build_creeps = function () {
+var build_creeps = function () {
     for (var spawn_name in Game.spawns) {
         var spawn = Game.spawns[spawn_name];
         var local_creeps = spawn.room.find(FIND_MY_CREEPS);
@@ -67,7 +67,7 @@ build_creeps = function () {
     }
 }
 
-place_structures = function () {
+var place_structures = function () {
     for (var room_name in Game.rooms){
         var room = Game.rooms[room_name];
         var spawns = room.find(FIND_MY_SPAWNS);
@@ -109,7 +109,7 @@ place_structures = function () {
     }
 }
 
-id_tasks = function () {
+var id_tasks = function () {
     var needs = [];
     
     for (var room_name in Game.rooms) {
@@ -124,7 +124,7 @@ id_tasks = function () {
 }
 
 
-dispatch_creeps = function (needs) {
+var dispatch_creeps = function (needs) {
     for (var i = 0; i<needs.length; i++) {
         var room_needs = needs[i];
         var available_creeps = room_needs.room.find(FIND_MY_CREEPS);
@@ -157,7 +157,7 @@ dispatch_creeps = function (needs) {
     }
 }
 
-fire_towers = function () {
+var fire_towers = function () {
     
     for (var roomName in Game.rooms) {
         var room = Game.rooms[roomName];
