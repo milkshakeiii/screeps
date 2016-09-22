@@ -8,6 +8,13 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# tutorial branches
+tutorial-1/
+tutorial-2/
+tutorial-3/
+tutorial-4/
+tutorial-5/
+
 # Windows Installer files
 *.cab
 *.msi
