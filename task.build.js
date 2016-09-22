@@ -9,7 +9,7 @@ var build = {
     compute_need: function (room) {
         if (room.find(FIND_MY_CONSTRUCTION_SITES).length != 0) {
             var creeps_in_room = room.find(FIND_MY_CREEPS).length;
-            return 4;//creeps_in_room;
+            return 100;//creeps_in_room;
         }
         return 0;
     },
@@ -34,10 +34,7 @@ var build = {
             }
         }
         else {
-            var source = brain.find_energy_source(creep)
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
+            brain.acquire_energy(creep);
         }
     }
 }

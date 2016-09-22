@@ -29,10 +29,7 @@ var harvest = {
         }
         
         if (!creep.memory.delivering) {
-            var source = brain.find_energy_source(creep);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
+            brain.acquire_energy(creep);
         }
         else {
             var targets = creep.room.find(FIND_STRUCTURES, {

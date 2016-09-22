@@ -7,19 +7,54 @@ var brain = {
         return sources[target_source_i];
     },
     
+    acquire_energy: function (creep) {
+        var source = brain.find_energy_source(creep);
+        if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(source);
+        }
+    },
+    
     random_int: function (min,max) {
         return Math.floor(Math.random()*(max-min+1)+min);
     },
     
     empty_position_near: function (room, x, y) {
-        while (room.lookForAt(LOOK_TERRAIN, x, y) == "wall" ||
-               room.lookForAt(LOOK_STRUCTURES, x, y).length != 0 ||
-               room.lookForAt(LOOK_CONSTRUCTION_SITES, x, y).length != 0) {
-            x += Math.abs(brain.random_int(-5, 5)%50);
-            y += Math.abs(brain.random_int(-5, 5)%50);
-            //onsole.log([x, y]);
+        //return [0, 1];
+        
+        var frontier = [];
+        var explored = [];
+        
+        frontier.push([x, y], [x-2, y], [x-2, y-2], [x-2, y+2], [x, y-2], [x+2, y], [x+2, y-2], [x+2, y+2], [x, y+2]);
+        
+        while (frontier.length != 0) {
+            var current = frontier.shift();
+            var x = current[0];
+            var y = current[1];
+            if (explored.includes(current)) {
+                continue;
+            }
+            //console.log([x, y]);
+            explored.push();
+            var is_wall = room.lookForAt(LOOK_TERRAIN, x, y) == "wall";
+            var is_empty = (x >= 0 && x <= 49 && y >= 0 && y <= 49 && !is_wall &&
+                            room.lookForAt(LOOK_STRUCTURES, x, y).length == 0 &&
+                            room.lookForAt(LOOK_CONSTRUCTION_SITES, x, y).length == 0);
+            
+            if (is_empty) {
+                return [x, y];
+            }
+            else if (!is_wall) {
+                frontier.push ([x-2, y]);
+                frontier.push ([x-2, y-2]);
+                frontier.push ([x-2, y+2]);
+                frontier.push ([x, y-2]);
+                frontier.push ([x+2, y]);
+                frontier.push ([x+2, y-2]);
+                frontier.push ([x+2, y+2]);
+                frontier.push ([x, y+2]);
+            }
         }
-        return [x, y];
+        return "fail";
     },
     
     creep_can_perform_task: function (creep, task) {

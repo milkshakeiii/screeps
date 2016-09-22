@@ -1,4 +1,5 @@
-var tasks = [require('task.settle'), require('task.harvest'), require('task.build'), require('task.upgrade'), require('task.harass')];
+var tasks = [   require('task.harvest'), require('task.priority_upgrade'), require('task.build'),
+                require('task.upgrade'), require('task.harass'), require('task.settle')];
 var brain = require('brain')
 
 var worker_switch = 60;
@@ -37,8 +38,8 @@ build_creeps = function () {
             
         }
         else {
-            part_array = [CLAIM, MOVE, MOVE, ATTACK];
-            part_array = [TOUGH, TOUGH, MOVE, MOVE, MOVE, ATTACK];
+            part_array = [CLAIM, CLAIM, MOVE, MOVE];
+            //part_array = [TOUGH, TOUGH, MOVE, MOVE, MOVE, ATTACK];
         }
         spawn.createCreep(part_array, undefined, {designation: brain.random_int(1, 999)});
     }
@@ -48,12 +49,16 @@ place_structures = function () {
     for (var room_name in Game.rooms){
         var room = Game.rooms[room_name];
         var spawns = room.find(FIND_MY_SPAWNS);
+        var sources = room.find(FIND_SOURCES);
         
-        //place a spawn if there aren't any
-        if (spawns.length == 0) {
-            var empty_position = brain.empty_position_near(room, 25, 25);
-            var x = empty_position[0];
-            var y = empty_position[1];
+        //place a spawn if there aren't any and there is an energy source
+        if (spawns.length == 0 && sources.length != 0) {
+            var target_source = sources[0];
+            var x = target_source.pos.x;
+            var y = target_source.pos.y;
+            var empty_position = brain.empty_position_near(room, x, y);
+            x = empty_position[0];
+            y = empty_position[1];
             room.createConstructionSite(x, y, STRUCTURE_SPAWN);
         }
         
@@ -61,17 +66,22 @@ place_structures = function () {
         if (spawns.length != 0)
         {
             var spawn = spawns[0];
-            var empty_position = brain.empty_position_near(room, 25, 5);
-            var x = empty_position[0];
-            var y = empty_position[1];
+            var random_source = sources[brain.random_int(0, sources.length-1)];
+            var x = random_source.pos.x;
+            var y = random_source.pos.y;
+            var empty_position = brain.empty_position_near(room, x, y);
+            x = empty_position[0];
+            y = empty_position[1];
             room.createConstructionSite(x, y, STRUCTURE_EXTENSION);
         }
         
         //place a tower if we can
         if (spawns.length != 0) {
-            var empty_position = brain.empty_position_near(room, 25, 25);
-            var x = empty_position[0];
-            var y = empty_position[1];
+            var x = spawns[0].pos.x;
+            var y = spawns[0].pos.y;
+            var empty_position = brain.empty_position_near(room, x, y);
+            x = empty_position[0];
+            y = empty_position[1];
             room.createConstructionSite(x, y, STRUCTURE_TOWER);
         }
     }
@@ -128,14 +138,16 @@ dispatch_creeps = function (needs) {
 fire_towers = function () {
     
     for (var roomName in Game.rooms) {
-        var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+        var room = Game.rooms[roomName];
+        var hostiles = room.find(FIND_HOSTILE_CREEPS);
+        
         
         if(hostiles.length > 0) {
             var username = hostiles[0].owner.username;
             Game.notify(`User ${username} spotted in room ${roomName}`);
-            var towers = Game.rooms[roomName].find(
+            var towers = room.find(
                 FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-            towers.forEach(tower => tower.attack(hostiles[0]));
+            towers.forEach(tower => tower.attack(tower.pos.findClosestByRange(hostiles)));
         }
     }
 }

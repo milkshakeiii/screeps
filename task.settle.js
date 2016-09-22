@@ -15,8 +15,17 @@ var settle = {
 
         if (creep.room.controller.my || creep.room.controller.owner != undefined) {
             creep.say("Is this it");
-            var exits = creep.room.find(FIND_EXIT);
-            var random_exit = exits[creep.memory.designation%exits.length];
+            //if (creep.memory.target_exit_x == creep.pos.x && creep.memory.target_exit_y == creep.pos.y) {
+            if (creep.room.name != creep.memory.last_room_name) {
+                //console.log("new exit");
+                var exits = creep.room.find(FIND_EXIT);
+                var random_exit = exits[brain.random_int(0, exits.length-1)];
+                creep.memory.target_exit_x = random_exit.x;
+                creep.memory.target_exit_y = random_exit.y;
+                creep.memory.last_room_name = creep.room.name;
+            }
+            random_exit = creep.room.getPositionAt(creep.memory.target_exit_x, creep.memory.target_exit_y);
+            
             creep.moveTo(random_exit);
         }
         else {

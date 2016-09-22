@@ -10,7 +10,7 @@ var upgrade = {
         if (!room.controller == undefined && room.controller.my) {
             return 0
         }
-        return 23;
+        return 100;
     },
     
     /** @param {Creep} creep **/
@@ -32,12 +32,17 @@ var upgrade = {
             }
         }
         else {
-            var source = brain.find_energy_source(creep)
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
+            brain.acquire_energy(creep);
         }
     }
+}
+
+var priority_upgrade = upgrade;
+priority_upgrade.compute_need = function (room) {
+    if (!room.controller == undefined && room.controller.my) {
+        return 0
+    }
+    return 1;
 }
 
 module.exports = upgrade;
