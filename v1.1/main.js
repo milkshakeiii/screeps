@@ -1,4 +1,4 @@
-var tasks = [   require('task.priority_upgrade'), require('task.defend'), require('task.harvest'),  require('task.build'),
+var tasks = [   require('task.priority_upgrade'), require('task.harvest'), require('task.defend'), require('task.build'),
                 require('task.upgrade'), require('task.harass'), require('task.settle')];
 var brain = require('brain')
 
@@ -14,10 +14,6 @@ var clean_up = function () {
     
     for (var name in Memory.rooms) {
         var room = Game.rooms[name];
-        if (room == undefined) {
-            delete Memory.rooms[name];
-            console.log('Clearing non-existing room memory:', name);
-        }
         if (room.memory.reserved_objects == undefined) {
             room.memory.reserved_objects = [];
         }
@@ -92,6 +88,7 @@ var place_structures = function () {
         if (spawns.length != 0)
         {
             var spawn = spawns[0];
+            sources = sources.filter(brain.is_unguarded);
             var random_source = sources[brain.random_int(0, sources.length-1)];
             var x = random_source.pos.x;
             var y = random_source.pos.y;
