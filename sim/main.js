@@ -88,6 +88,7 @@ var place_structures = function () {
         if (spawns.length != 0)
         {
             var spawn = spawns[0];
+            sources = sources.filter(brain.is_unguarded);
             var random_source = sources[brain.random_int(0, sources.length-1)];
             var x = random_source.pos.x;
             var y = random_source.pos.y;

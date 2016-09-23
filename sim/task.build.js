@@ -16,7 +16,6 @@ var build = {
     
     /** @param {Creep} creep **/
     perform: function (creep) {
-        
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
             creep.say('harvesting');

@@ -7,6 +7,7 @@ var brain = {
             return brain.count_mining_positions(source) > 1;
         }
         sources = sources.filter(more_than_one_spot);
+        sources = sources.filter(brain.is_unguarded);
         var original_length = sources.length;
         for (var j = 0; j < original_length; j++) {
             var source = sources[j];
@@ -17,6 +18,17 @@ var brain = {
         }
         var target_source_i = creep.memory.designation%sources.length;
         return sources[target_source_i];
+    },
+    
+    
+    is_unguarded: function (source) {
+        function is_keeper_lair(structure) {
+            return structure.structureType == STRUCTURE_KEEPER_LAIR;
+        }
+        var nearby_structures = source.pos.findInRange(FIND_STRUCTURES, 5);
+        var guards = nearby_structures.filter(is_keeper_lair);
+        //console.log(guards);
+        return !(guards.length > 0);
     },
     
     clear_on_all_sides: function (room, x, y) {
