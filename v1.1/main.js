@@ -2,6 +2,8 @@ var tasks = [   require('task.priority_upgrade'), require('task.harvest'), requi
                 require('task.upgrade'), require('task.harass'), require('task.settle')];
 var brain = require('brain')
 
+var partial_switch = 13;
+var partial_switch_increment = 5;
 var worker_switch = 60;
 
 var clean_up = function () {
@@ -29,35 +31,53 @@ var clean_up = function () {
     }
 }
 
+var appropriate_part_array = function (spawn) {
+    var part_array = [];
+    if (spawn.room.energyCapacityAvailable < 400) {
+        part_array = [WORK, CARRY, CARRY, MOVE, MOVE];
+    }
+    else if (spawn.room.energyCapacityAvailable < 500) {
+        part_array = [WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+    }
+    else if (spawn.room.energyCapacityAvailable < 600) {
+        part_array = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
+    }
+    else if (spawn.room.energyCapacityAvailable < 800) {
+        part_array = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
+    }
+    else if (spawn.room.energyCapacityAvailable < 1300) {
+        part_array = [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    }
+    else if (spawn.room.energyCapacityAvailable >= 1300) {
+        part_array = [  CARRY, WORK, MOVE, CARRY, WORK, MOVE, 
+                        MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, 
+                        MOVE, MOVE, MOVE, MOVE, MOVE, 
+                        WORK, CARRY, ATTACK];
+    }
+}
+
 var build_creeps = function () {
     for (var spawn_name in Game.spawns) {
         var spawn = Game.spawns[spawn_name];
+        if (spawn.memory.increment == undefined) {
+            spawn.memory.increment = 0;
+        }
         var local_creeps = spawn.room.find(FIND_MY_CREEPS);
         var part_array = [];
         
         if (local_creeps.length < worker_switch) {
-            if (spawn.room.energyCapacityAvailable < 400) {
-                part_array = [WORK, CARRY, CARRY, MOVE, MOVE];
+            (local_creeps.length > partial_switch)
+            {   
+                spawn.memory.increment = (spawn.memory.increment + 1)%partial_switch_increment;
+                if (spawn.memory.increment == 0 && spawn.room.energyCapacityAvailable >= 1300) {
+                    part_array =  [  CLAIM, 
+                        MOVE, MOVE, MOVE, MOVE, MOVE, 
+                        WORK, CARRY, ATTACK];
+                }
+                else {
+                    part_array = appropriate_part_array(spawn);
+                }
             }
-            else if (spawn.room.energyCapacityAvailable < 500) {
-                part_array = [WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-            }
-            else if (spawn.room.energyCapacityAvailable < 600) {
-                part_array = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
-            }
-            else if (spawn.room.energyCapacityAvailable < 800) {
-                part_array = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
-            }
-            else if (spawn.room.energyCapacityAvailable < 1300) {
-                part_array = [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-            }
-            else if (spawn.room.energyCapacityAvailable >= 1300) {
-                part_array = [  CARRY, WORK, MOVE, CARRY, WORK, MOVE, 
-                                MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, 
-                                MOVE, MOVE, MOVE, MOVE, MOVE, 
-                                WORK, CARRY, ATTACK];
-            }
-            
         }
         else {
             part_array = [CLAIM, CLAIM, MOVE, MOVE];
@@ -163,7 +183,6 @@ var fire_towers = function () {
     for (var roomName in Game.rooms) {
         var room = Game.rooms[roomName];
         var hostiles = room.find(FIND_HOSTILE_CREEPS);
-        
         
         if(hostiles.length > 0) {
             var username = hostiles[0].owner.username;

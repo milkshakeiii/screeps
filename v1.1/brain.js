@@ -8,14 +8,14 @@ var brain = {
         }
         sources = sources.filter(more_than_one_spot);
         sources = sources.filter(brain.is_unguarded);
-        var original_length = sources.length;
-        for (var j = 0; j < original_length; j++) {
-            var source = sources[j];
-            var mining_spots = brain.count_mining_positions(source);
-            for (var i = 0; i < mining_spots; i++) {
-                sources.push(source);
-            }
-        }
+        //var original_length = sources.length;
+        //for (var j = 0; j < original_length; j++) {
+        //    var source = sources[j];
+        //    var mining_spots = brain.count_mining_positions(source);
+        //    for (var i = 0; i < mining_spots; i++) {
+        //        sources.push(source);
+        //    }
+        //}
         var target_source_i = creep.memory.designation%sources.length;
         return sources[target_source_i];
     },
