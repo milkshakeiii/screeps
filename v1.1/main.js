@@ -83,7 +83,7 @@ var build_creeps = function () {
         else {
             part_array = appropriate_part_array(spawn);
         }
-       console.log(spawn.createCreep(part_array, undefined, {designation: brain.random_int(1, 999)}));
+       spawn.createCreep(part_array, undefined, {designation: brain.random_int(1, 999)});
     }
 }
 
