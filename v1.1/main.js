@@ -54,6 +54,7 @@ var appropriate_part_array = function (spawn) {
                         MOVE, MOVE, MOVE, MOVE, MOVE, 
                         WORK, CARRY, ATTACK];
     }
+    return part_array;
 }
 
 var build_creeps = function () {
@@ -65,25 +66,24 @@ var build_creeps = function () {
         var local_creeps = spawn.room.find(FIND_MY_CREEPS);
         var part_array = [];
         
-        if (local_creeps.length < worker_switch) {
-            (local_creeps.length > partial_switch)
-            {   
-                spawn.memory.increment = (spawn.memory.increment + 1)%partial_switch_increment;
-                if (spawn.memory.increment == 0 && spawn.room.energyCapacityAvailable >= 1300) {
-                    part_array =  [  CLAIM, 
-                        MOVE, MOVE, MOVE, MOVE, MOVE, 
-                        WORK, CARRY, ATTACK];
-                }
-                else {
-                    part_array = appropriate_part_array(spawn);
-                }
+        if (local_creeps.length > worker_switch) {
+            part_array = [CLAIM, CLAIM, MOVE, MOVE];
+        }
+        else if (local_creeps.length > partial_switch) {   
+            spawn.memory.increment = (spawn.memory.increment + 1)%partial_switch_increment;
+            if (spawn.memory.increment == 0 && spawn.room.energyCapacityAvailable >= 1300) {
+                part_array =  [  CLAIM, 
+                    MOVE, MOVE, MOVE, MOVE, MOVE, 
+                    WORK, CARRY, ATTACK];
+            }
+            else {
+                part_array = appropriate_part_array(spawn);
             }
         }
         else {
-            part_array = [CLAIM, CLAIM, MOVE, MOVE];
-            //part_array = [TOUGH, TOUGH, MOVE, MOVE, MOVE, ATTACK];
+            part_array = appropriate_part_array(spawn);
         }
-        spawn.createCreep(part_array, undefined, {designation: brain.random_int(1, 999)});
+       console.log(spawn.createCreep(part_array, undefined, {designation: brain.random_int(1, 999)}));
     }
 }
 
